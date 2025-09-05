@@ -1,0 +1,18 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# 安装依赖
+RUN pip install flask
+
+# 创建日志目录
+RUN mkdir -p /var/log/app
+
+# 复制应用代码
+COPY main-app.py .
+
+# 暴露端口
+EXPOSE 5000
+
+# 启动应用
+CMD ["python", "main-app.py"]

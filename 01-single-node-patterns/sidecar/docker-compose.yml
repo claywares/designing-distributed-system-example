@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  main-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.main
+    container_name: sidecar-main-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - shared-logs:/var/log/app
+    networks:
+      - sidecar-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  sidecar:
+    build:
+      context: .
+      dockerfile: Dockerfile.sidecar
+    container_name: sidecar-monitor
+    ports:
+      - "8080:8080"
+    volumes:
+      - shared-logs:/var/log/app
+    networks:
+      - sidecar-network
+    restart: unless-stopped
+    depends_on:
+      - main-app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  shared-logs:
+    driver: local
+
+networks:
+  sidecar-network:
+    driver: bridge

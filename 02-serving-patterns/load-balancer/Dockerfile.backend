@@ -1,0 +1,18 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# 安装Python依赖
+RUN pip install flask
+
+# 复制应用代码
+COPY backend-service.py .
+
+# 暴露端口
+EXPOSE 8000
+
+# 启动应用
+CMD ["python", "backend-service.py"]

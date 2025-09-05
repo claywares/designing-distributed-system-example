@@ -1,0 +1,15 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# 安装依赖
+RUN pip install requests
+
+# 复制应用代码
+COPY sidecar-monitor.py .
+
+# 暴露端口
+EXPOSE 8080
+
+# 启动监控服务
+CMD ["python", "sidecar-monitor.py"]
